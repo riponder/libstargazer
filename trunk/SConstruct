@@ -13,4 +13,5 @@ env.Append( RPATH = env.Literal( '\\$$ORIGIN'))
 
 library_target = env.SharedLibrary( "stargazer", ["StarGazer.cpp", "serial_port.cpp"] )
 env.Program( "learn_stargazer_map", ["learn_stargazer_map.cpp", library_target] )
+env.Program( "demo", ["demo.cpp", library_target] )
 
