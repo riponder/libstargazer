@@ -1,0 +1,15 @@
+<package>
+  <description brief="StarGazer interface library">
+     Hardware driver for the Stargazer localization system. This builds a library that is used by the StarGazerNode package. Also builds a stand alone (non ros) application that can be used for map building.
+  </description>
+  <author>Julius Ziegler</author>
+  <license>LGPL</license>
+
+  <depend package="roscpp"/>
+
+  <!-- <rosdep name="libserial-dev"> -->
+
+  <export>
+     <cpp cflags="-I${prefix}" lflags="-L${prefix}/lib -lStarGazer -Wl,-rpath,${prefix}/lib"/>
+  </export>
+</package>
