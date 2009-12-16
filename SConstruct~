@@ -1,9 +1,0 @@
-env = Environment()
-env.SharedLibrary( "stargazer", ["StarGazer.cpp", "serial_port.cpp"] )
-
-# pyenv.SharedLibrary( "bres", ["bres.cpp"] )
-# pyenv.SharedLibrary( "pydial", ["pydial.cpp"] )
-
-# env.Program( "rtdb_server_joystick", ["rtdb_server_joystick.cpp"], CPPFLAGS="-g" )
-
-# Return
