@@ -12,6 +12,9 @@ int ref_id;
 int no_ids;
 
 std::string device;
+std::string id_type;
+
+int id_dim;
 
 void parse_commandline( int argc, char** argv )
 {
@@ -26,6 +29,8 @@ void parse_commandline( int argc, char** argv )
     ( "reference-id,r", po::value<int>( &ref_id )->default_value( 18966 ), "use this as reference id" )
     ( "no-ids,n", po::value<int>( &no_ids )->default_value( 11 ), "learn this number of ids" )
     ( "device-node,d", po::value<string>( &device )->default_value( "/dev/ttyS0" ), "device node of serial port" )
+    ( "id-type,t", po::value<string>( &id_type )->default_value( "Home" ), "Type of ids: 3x3 (\"Home\") or 4x4 (\"Office\")" )
+    ( "id-dim,s", po::value<int>( &id_dim )->default_value( 3 ), "Dimension of ids, 1-3" )
     ;
 
   po::variables_map vm;
@@ -72,6 +77,7 @@ int main( int argc, char** argv )
   std::clog << "MarkMode \t"   << sg.read_parameter( "MarkMode" )  << "\n";
   std::clog << "HeightFix: \t" << sg.read_parameter( "HeightFix" ) << "\n";
   std::clog << "MarkType: \t"  << sg.read_parameter( "MarkType" )  << "\n";
+  std::clog << "MarkDim: \t"  << sg.read_parameter( "MarkDim" )  << "\n";
 
   sg.build_map( no_ids, ref_id ); 
 }
