@@ -1,0 +1,12 @@
+please try:
+
+./learn_stargazer_map -h
+
+for a description of options.
+
+Note that this must be run on the machine StarGazer is connected to.
+If you do not see the string "Firmware version ..." after few seconds,
+troubleshoot the connection!
+
+
+
