@@ -82,4 +82,12 @@ private:
   int ser_fd;
 };
 
+template<class T> void StarGazer::write_parameter( const std::string parameter, const T value )
+{
+  send_command_string( "~#" +parameter + "|" + boost::lexical_cast<std::string>( value ) + "`" );
+  send_command_string( "~#SetEnd`" );
+
+  acknowledge_parameter_update();
+}
+
 #endif
