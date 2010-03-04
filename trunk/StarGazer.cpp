@@ -219,6 +219,8 @@ void StarGazer::stop_calc()
 	  flush_stargazer_buffer();
 	}
     }
+
+  flush_stargazer_buffer();
 }
 
 void StarGazer::send_command_string( const std::string str )

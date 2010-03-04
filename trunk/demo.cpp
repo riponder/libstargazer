@@ -10,7 +10,8 @@ using namespace std;
 
 int main( int, char** )
 {
-  StarGazer sg;
+  StarGazer sg( "/dev/ttyUSB0" );
+  sg.start_calc();
 
   while( true )
     {
@@ -19,12 +20,8 @@ int main( int, char** )
       pd = sg.get_position();
       
       if( pd.dead )
-	{
-	  cout << "dead!\n";
-	}
-      else
-	{
+	  cout << "dead!\n";      
+      else	
 	  cout << "x, y, z, theta: " << pd.x << ", "  << pd.y << ", "  << pd.z << ", "  << pd.theta << "\n"; 
-	}      
     }
 }
