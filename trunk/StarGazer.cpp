@@ -108,7 +108,8 @@ void StarGazer::build_map( int no_markers, int ref_marker_id )
 
     std::clog << "\v";
 
-    PositionData pd = parse_position_msg( str );
+    std::vector<PositionData> pds = parse_position_msg( str );
+    PositionData pd = pds[0];
 
     if( !pd.dead ) {
       std::clog << "FIX: " << pd.id << "\n";
@@ -158,7 +159,7 @@ void StarGazer::build_map( int no_markers, int ref_marker_id )
   stop_calc();
 }
 
-StarGazer::PositionData StarGazer::get_position()
+std::vector<StarGazer::PositionData> StarGazer::get_position()
 {
   return parse_position_msg( get_string() );
 }
@@ -204,6 +205,7 @@ void StarGazer::stop_calc()
   // must repeat this until success (see manual)
   std::clog << "stop calc...\n";
 
+  //flush_stargazer_buffer();
   bool success = false;
   while( !success )
     {
@@ -216,7 +218,7 @@ void StarGazer::stop_calc()
 	  std::clog << e.what() << "\n";
 	  success = false;
 	  // make sure the buffer is empty:
-	  flush_stargazer_buffer();
+	  //flush_stargazer_buffer();
 	}
     }
 
@@ -286,7 +288,7 @@ std::string StarGazer::get_string()
       return "";
 
     result.push_back( c );
-  } while( c != '`' && result.size() < 40 );
+  } while( c != '`' && result.size() < 70 );
 
   // std::clog << "got string: " << result <<"\n";
 
@@ -322,50 +324,69 @@ std::string StarGazer::consume_token( std::string& str )
   return token;
 }
 
-StarGazer::PositionData StarGazer::parse_position_msg( std::string str )
+std::vector<StarGazer::PositionData> StarGazer::parse_position_msg( std::string str )
 {
-  PositionData result;
-    
+  std::vector<PositionData> result(1);
+
   try {
         
     if( str == "~*DeadZone`" )
       {
-	result.dead = true;
+	result[0].dead = true;
 	return result;
       }
 
     if( str.size() < 5 ) // read timeout?
       {
-	result.dead = true;
+	result[0].dead = true;
 	return result;
       }
 
+    //Check how many readings stargazer received
+    int num_readings = boost::lexical_cast<int> (str.substr(2, 1));
+    if (num_readings == 2)
+    {
+      result.resize(num_readings);
+    }
+
+
+
     str = str.substr( 3 );
+
     
     // primitive tokenizer expects | termination
     str[ str.size() - 1 ] = '|';
 
-    result.id    =  boost::lexical_cast<int>( consume_token( str ) );
+    //read available data
+    size_t marker_ind;
+    for ( marker_ind=0; marker_ind < num_readings; marker_ind++)
+    {
+      result[marker_ind].dead = false;
+      result[marker_ind].id    =  boost::lexical_cast<int>( consume_token( str ) );
 
-    // stargazer inverts angle!
-    result.theta = -boost::lexical_cast<double>( consume_token( str ) );
+      // stargazer inverts angle!
+      result[marker_ind].theta = -boost::lexical_cast<double>( consume_token( str ) );
 
-    result.x = boost::lexical_cast<double>( consume_token( str ) );
-    result.y = boost::lexical_cast<double>( consume_token( str ) );
-    result.z = boost::lexical_cast<double>( consume_token( str ) );
+      result[marker_ind].x = boost::lexical_cast<double>( consume_token( str ) );
+      result[marker_ind].y = boost::lexical_cast<double>( consume_token( str ) );
+      result[marker_ind].z = boost::lexical_cast<double>( consume_token( str ) );
+      
+      result[marker_ind].x *= 0.01;
+      result[marker_ind].y *= 0.01;
+      result[marker_ind].z *= 0.01;
+
+      result[marker_ind].theta *= M_PI/180.;
+    }
     
-    result.x *= 0.01;
-    result.y *= 0.01;
-    result.z *= 0.01;
-
-    result.theta *= M_PI/180.;
-
-    return result;
+      return result;
   }
   catch( std::exception e )
     {
       std::clog << "StarGazer::parse_position_msg(): caught error: " << e.what() << "\n"; 
-      result.dead = true;
+      for (size_t marker_ind=0; marker_ind < result.size(); marker_ind++)
+      {
+        result[marker_ind].dead = true;
+      }
       return result;
     }
 }

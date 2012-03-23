@@ -22,7 +22,7 @@ public:
       
   StarGazer( std::string device = "/dev/ttyS0" );
 
-  PositionData get_position();
+  std::vector<PositionData> get_position();
 
   /** run map building. Takes number of markers and reference marker id as
       parameters. **/
@@ -76,7 +76,7 @@ private:
   void acknowledge_parameter_update();
 
   static std::string consume_token( std::string& str );
-  static PositionData parse_position_msg( std::string str );
+  static std::vector<PositionData> parse_position_msg( std::string str );
 
   // SerialPort ser;
   int ser_fd;
