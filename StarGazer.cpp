@@ -20,6 +20,9 @@
 
 // #define USE_LIBSERIAL
 
+//#define PRINT_STRINGS 1
+//#define PRINT_STRINGS_CHARBYCHAR 1
+
 StarGazer::StarGazer( std::string device ):
   ser_fd( initport( device ) )
 {    
@@ -197,6 +200,7 @@ double StarGazer::calc_height()
 
 void StarGazer::start_calc()
 {
+  std::clog << "sending CalcStart ...\n";
   send_command_string( command_string( "CalcStart" ) );
 }
 
@@ -274,23 +278,34 @@ std::string StarGazer::get_string()
   char c;
 
   do {
-    
-    // std::clog << "read...\n";
+
+#ifdef PRINT_STRINGS_CHARBYCHAR
+    std::clog << "read...\n";
+#endif
+
     int no_read = read( ser_fd, &c, 1 );
-    //      std::cout << "read " << no_read << "\n";
-    // std::clog << "...done.\n";
+
+#ifdef PRINT_STRINGS_CHARBYCHAR
+         std::cout << "read " << no_read << "\n";
+    std::clog << "...done.\n";
+#endif
+
     if( no_read == 0 )
       return "";
-    
-    // std::clog << "[" << (unsigned int)c << "]" << "\n";
-    
+
+#ifdef PRINT_STRINGS_CHARBYCHAR
+    std::clog << "[" << (unsigned int)c << "]" << "\n";
+#endif
+
     if( (unsigned int)(c) <= 32 || (unsigned int)(c) > 127 ) 
       return "";
 
     result.push_back( c );
   } while( c != '`' && result.size() < 70 );
 
-  // std::clog << "got string: " << result <<"\n";
+#ifdef PRINT_STRINGS
+  std::clog << "got string: " << result <<"\n";
+#endif
 
   return result;
 }
