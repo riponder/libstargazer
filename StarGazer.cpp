@@ -344,6 +344,7 @@ std::vector<StarGazer::PositionData> StarGazer::parse_position_msg( std::string 
   std::vector<PositionData> result(1);
 
   try {
+
         
     if( str == "~*DeadZone`" )
       {
@@ -358,12 +359,20 @@ std::vector<StarGazer::PositionData> StarGazer::parse_position_msg( std::string 
       }
 
     //Check how many readings stargazer received
-    int num_readings = boost::lexical_cast<int> (str.substr(2, 1));
+    int num_readings;
+    //1-id mode. Reading an I indicates map mode
+    if (str.at(2) == 'I')
+    {
+	num_readings = 1;
+    } else {
+	//2-id mode. Message contains number of ids seen
+        int num_readings = boost::lexical_cast<int> (str.substr(2, 1));
+    }
+
     if (num_readings == 2)
     {
       result.resize(num_readings);
     }
-
 
 
     str = str.substr( 3 );
@@ -378,6 +387,7 @@ std::vector<StarGazer::PositionData> StarGazer::parse_position_msg( std::string 
     {
       result[marker_ind].dead = false;
       result[marker_ind].id    =  boost::lexical_cast<int>( consume_token( str ) );
+
 
       // stargazer inverts angle!
       result[marker_ind].theta = -boost::lexical_cast<double>( consume_token( str ) );
