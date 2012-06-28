@@ -345,7 +345,6 @@ std::vector<StarGazer::PositionData> StarGazer::parse_position_msg( std::string 
 
   try {
 
-        
     if( str == "~*DeadZone`" )
       {
 	result[0].dead = true;
@@ -363,10 +362,11 @@ std::vector<StarGazer::PositionData> StarGazer::parse_position_msg( std::string 
     //1-id mode. Reading an I indicates map mode
     if (str.at(2) == 'I')
     {
+	std::cout << "at 2: " << str.at(2) << std::endl;
 	num_readings = 1;
     } else {
 	//2-id mode. Message contains number of ids seen
-        int num_readings = boost::lexical_cast<int> (str.substr(2, 1));
+        num_readings = boost::lexical_cast<int> (str.substr(2, 1));
     }
 
     if (num_readings == 2)
