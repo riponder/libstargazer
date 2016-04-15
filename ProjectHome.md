@@ -1,0 +1,1 @@
+An API to access features of the Hagisonic StarGazer device
